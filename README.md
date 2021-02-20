@@ -1,1 +1,1 @@
-# day-ly
+# day.ly

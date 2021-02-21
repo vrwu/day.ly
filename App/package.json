@@ -1,0 +1,41 @@
+{
+  "main": "node_modules/expo/AppEntry.js",
+  "scripts": {
+    "start": "expo start",
+    "android": "expo start --android",
+    "ios": "expo start --ios",
+    "web": "expo start --web",
+    "eject": "expo eject"
+  },
+  "dependencies": {
+    "@expo-google-fonts/inter": "^0.1.0",
+    "@expo-google-fonts/open-sans": "^0.1.0",
+    "@material-ui/core": "^4.11.3",
+    "@react-native-community/async-storage": "^1.12.1",
+    "@react-native-community/masked-view": "^0.1.10",
+    "@react-navigation/native": "^5.9.2",
+    "@react-navigation/stack": "^5.14.2",
+    "expo": "~40.0.0",
+    "expo-font": "~8.4.0",
+    "expo-linear-gradient": "~8.4.0",
+    "expo-status-bar": "~1.0.3",
+    "react": "^17.0.1",
+    "react-dom": "16.13.1",
+    "react-native": "^0.63.4",
+    "react-native-gesture-handler": "^1.10.1",
+    "react-native-paper": "^4.7.1",
+    "react-native-paper-dropdown": "^0.0.5",
+    "react-native-reanimated": "^1.13.2",
+    "react-native-safe-area-context": "^3.1.9",
+    "react-native-screens": "^2.17.1",
+    "react-native-vector-icons": "^8.0.0",
+    "react-native-web": "^0.15.0",
+    "react-navigation": "^4.4.3",
+    "react-redux": "^7.2.2",
+    "redux": "^4.0.5"
+  },
+  "devDependencies": {
+    "@babel/core": "~7.9.0"
+  },
+  "private": true
+}

@@ -1,8 +1,11 @@
 import { StatusBar } from 'expo-status-bar';
 import React, { useState } from 'react';
 import { StyleSheet, Text, View, Button, Alert, SafeAreaView, ScrollView, FlatList, TouchableHighlight, TouchableOpacity} from 'react-native';
+import { LinearGradient } from 'expo-linear-gradient';
 
+import {delSess} from '../actions/action';
 import { useFonts } from 'expo-font';
+import { useDispatch, useSelector } from 'react-redux';
 
 state = {
   fontsLoaded: false,
@@ -18,12 +21,50 @@ export default function StudySessions({navigation}) {
     'ProximaNovaBold': require('../assets/fonts/ProximaNova-Bold.otf'),
   });
 
-    const [sess, setSess] = useState([
-      {name: "math", starTime: "3pm", time: 2, sessName: "Pomodorox2", key: 1},
-      {name: "bio", starTime: "3pm", time: 2, sessName: "Pomodorox2", key: 2},
-      {name: "paper", starTime: "4pm", time: 2, sessName: "Day-ly grind", key: 3},
-      {name: "exam", starTime: "5pm", time: 2, sessName: "52-17", key: 4},
-    ]);
+    const session = useSelector(state => state.session)
+    const orderSess = [[],[],[],[],[],[],[]];
+    //Sunday
+    for (i = 0; i < session.length; i++){
+      if (session[i].day == 'sunday'){
+        orderSess[0].push(session[i])
+      }
+    }
+    //Monday
+    for (i = 0; i < session.length; i++){
+      if (session[i].day == 'monday'){
+        orderSess[1].push(session[i])
+      }
+    }
+    //Tuesday
+    for (i = 0; i < session.length; i++){
+      if (session[i].day == 'tuesday'){
+        orderSess[2].push(session[i])
+      }
+    }
+    //Wednesday
+    for (i = 0; i < session.length; i++){
+      if (session[i].day == 'wednesday'){
+        orderSess[3].push(session[i])
+      }
+    }
+    //Thursday
+    for (i = 0; i < session.length; i++){
+      if (session[i].day == 'thursday'){
+        orderSess[4].push(session[i])
+      }
+    }
+    //Friday
+    for (i = 0; i < session.length; i++){
+      if (session[i].day == 'friday'){
+        orderSess[5].push(session[i])
+      }
+    }
+    //Saturday
+    for (i = 0; i < session.length; i++){
+      if (session[i].day == 'saturday'){
+        orderSess[6].push(session[i])
+      }
+    }
 
 
     //Function handles
@@ -38,44 +79,110 @@ export default function StudySessions({navigation}) {
           },
           {
             text: "Yes",
-            onPress: () => handleRemove(item.key),
+            onPress: () => del(item),
           },
           
         ]
       )
     };
-    const handleRemove = (key) => {
-      setSess((prevSess) => {
-        return prevSess.filter(ses => ses.key != key)
-      })
-    };
-    const handleTimer = (item) => {
-      navigation.navigate('TimerPage')
-    };
+    
+    //Connecting global 
+    const dispatch = useDispatch();
 
+    const del = (sess) => dispatch(delSess(sess))
+
+    const handleView = (item) => {
+      console.log(item.name)
+      navigation.navigate("SessionDetails", {
+        name: item.name,
+        starTime: item.starTime,
+        dur: item.time,
+        type: [item.lenWork,item.lenRest],
+      })
+    }
   
     if(!fontsLoaded) {
       return null;
     }
       return (
-        <View style={styles.container}>
+        <LinearGradient colors={['#00c6ff', '#0072ff']} style={styles.container}>
           <Text style={styles.heading}> 
               your study sessions
           </Text>
           <Text style ={styles.subHeading}> find your upcoming sessions here</Text>
           
           {/* List of Sessions*/}
-          <Text style={styles.day}>Monday</Text>
+          <Text style={styles.day}>Sunday</Text>
           <FlatList
             keyExtractor={item => item.key.toString()}
-            data={sess}
+            data={orderSess[0]}
             renderItem={({ item }) => (
-              <TouchableOpacity onLongPress={() => handleEdit(item)} onPress={() => handleTimer(item)}>
+              <TouchableOpacity onLongPress={() => handleEdit(item)} onPress={() => handleView(item)}>
                 <Text style={styles.item}>{item.name + " - " + item.starTime}</Text>
               </TouchableOpacity>
             )}
           />
-        </View>
+          <Text style={styles.day}>Monday</Text>
+          <FlatList
+            keyExtractor={item => item.key.toString()}
+            data={orderSess[1]}
+            renderItem={({ item }) => (
+              <TouchableOpacity onLongPress={() => handleEdit(item)} onPress={() => handleView(item)}>
+                <Text style={styles.item}>{item.name + " - " + item.starTime}</Text>
+              </TouchableOpacity>
+            )}
+          />
+          <Text style={styles.day}>Tuesday</Text>
+          <FlatList
+            keyExtractor={item => item.key.toString()}
+            data={orderSess[2]}
+            renderItem={({ item }) => (
+              <TouchableOpacity onLongPress={() => handleEdit(item)} onPress={() => handleView(item)}>
+                <Text style={styles.item}>{item.name + " - " + item.starTime}</Text>
+              </TouchableOpacity>
+            )}
+          />
+          <Text style={styles.day}>Wednesday</Text>
+          <FlatList
+            keyExtractor={item => item.key.toString()}
+            data={orderSess[3]}
+            renderItem={({ item }) => (
+              <TouchableOpacity onLongPress={() => handleEdit(item)} onPress={() => handleView(item)}>
+                <Text style={styles.item}>{item.name + " - " + item.starTime}</Text>
+              </TouchableOpacity>
+            )}
+          />
+          <Text style={styles.day}>Thursday</Text>
+          <FlatList
+            keyExtractor={item => item.key.toString()}
+            data={orderSess[4]}
+            renderItem={({ item }) => (
+              <TouchableOpacity onLongPress={() => handleEdit(item)} onPress={() => handleView(item)}>
+                <Text style={styles.item}>{item.name + " - " + item.starTime}</Text>
+              </TouchableOpacity>
+            )}
+          />
+          <Text style={styles.day}>Friday</Text>
+          <FlatList
+            keyExtractor={item => item.key.toString()}
+            data={orderSess[5]}
+            renderItem={({ item }) => (
+              <TouchableOpacity onLongPress={() => handleEdit(item)} onPress={() => handleView(item)}>
+                <Text style={styles.item}>{item.name + " - " + item.starTime}</Text>
+              </TouchableOpacity>
+            )}
+          />
+          <Text style={styles.day}>Saturday</Text>
+          <FlatList
+            keyExtractor={item => item.key.toString()}
+            data={orderSess[6]}
+            renderItem={({ item }) => (
+              <TouchableOpacity onLongPress={() => handleEdit(item)} onPress={() => handleView(item)}>
+                <Text style={styles.item}>{item.name + " - " + item.starTime}</Text>
+              </TouchableOpacity>
+            )}
+          />
+        </LinearGradient>
         );
 }
     

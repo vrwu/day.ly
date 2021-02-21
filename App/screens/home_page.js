@@ -2,19 +2,32 @@ import { StatusBar } from 'expo-status-bar';
 import React, { useState } from 'react';
 import { StyleSheet, Text, View, Alert, FlatList, TouchableOpacity} from 'react-native';
 import {Button} from 'react-native-paper';
- 
-export default function HomePage({navigation}) {
+import { useFonts } from 'expo-font';
+import { LinearGradient } from 'expo-linear-gradient';
+
+import {delSess} from '../actions/action';
+import { useDispatch, useSelector } from 'react-redux';
+
+
+state = {
+  fontsLoaded: false,
+}
+const HomePage = ({navigation}) =>{
+  
+  
+  let [fontsLoaded] = useFonts({
+    'OpenSansSemiBold': require('../assets/fonts/OpenSans-SemiBold.ttf'),
+    'OpenSansRegular': require('../assets/fonts/OpenSans-Regular.ttf'),
+    'OpenSansBold': require('../assets/fonts/OpenSans-Bold.ttf'),
+    'ProximaNovaRegular': require('../assets/fonts/ProximaNova-Regular.otf'),
+    'ProximaNovaBold': require('../assets/fonts/ProximaNova-Bold.otf'),
+  });
  
     //temp place holder for data
     //startTime should an int, so its easier to use with an clock/time api idk
     //I just left it as a string so we can output am/pm 
-    const [sess, setSess] = useState([
-      {name: "math", starTime: "3pm", time: 2, sessName: "Pomodorox2", key: 1},
-      {name: "bio", starTime: "3pm", time: 2, sessName: "Pomodorox2", key: 2},
-      {name: "paper", starTime: "4pm", time: 2, sessName: "Day-ly grind", key: 3},  
-      {name: "exam", starTime: "5pm", time: 2, sessName: "52-17", key: 4},
-    ]);
- 
+    
+    const session = useSelector(state => state.session);
     var d = new Date();
     var weekday = new Array(7);
     weekday[0] = "Sunday";
@@ -25,7 +38,12 @@ export default function HomePage({navigation}) {
     weekday[5] = "Friday";
     weekday[6] = "Saturday";
     var dayOfTheWeek = weekday[d.getDay()];
- 
+    const todaySess = []
+    for (i = 0; i < session.length; i++){
+      if (session[i].day == dayOfTheWeek.toLowerCase()){
+        todaySess.push(session[i])
+      }
+    }
  
     //Function handles
     const handleEdit = (item) => {
@@ -39,64 +57,91 @@ export default function HomePage({navigation}) {
           },
           {
             text: "Yes",
-            onPress: () => handleRemove(item.key),
+            onPress: () => del(item),
           },
           
         ]
       )
-    };
-    const handleRemove = (key) => {
-      setSess((prevSess) => {
-        return prevSess.filter(ses => ses.key != key)
+    };    
+    const handleView = (item) => {
+      console.log(item.name)
+      navigation.navigate("SessionDetails", {
+        name: item.name,
+        starTime: item.starTime,
+        dur: item.time,
+        type: [item.lenWork,item.lenRest],
       })
-    };
+    }
+    
+    
+
+    //Connecting global 
+    const dispatch = useDispatch();
+
+    const del = (sess) => dispatch(delSess(sess))
+
     const createNew = () => {
       navigation.navigate('CreationScreen')
     };
+
+    const totalWeek = () => {
+      navigation.navigate('StudySessionsSettings')
+    };
  
     //Case for empty list of sessions 
-    if (sess.length == 0){
+    if (todaySess.length == 0){
+
+      if(!fontsLoaded) {
+        return null;
+      }
       return (
-        <View style={styles.container}>
-          <Text style={styles.heading}> 
-              Welcome, Theodore
+        
+        <LinearGradient colors={['#00c6ff', '#0072ff']} style={styles.container}>
+        <Button mode="contained" onPress={() => totalWeek()} style={styles.calendar} icon="calendar-month"> 
+        </Button>
+           <Text style={styles.heading}> 
+              welcome, johnathan
           </Text>
-          <Text style ={styles.subHeading}> Here are your day.ly tasks for {dayOfTheWeek}:)</Text>
-          <Text style = {{fontSize: 20, textAlign:'center'}}>There are no sessions for today. :(</Text>
-          <Text style = {{fontSize: 20, textAlign:'center'}}>Please feel free to add a session for today</Text>
-          <Text style = {{fontSize: 20, textAlign:'center'}}>or swipe right to see a week.ly view</Text>
- 
-          <TouchableOpacity onPress={() => createNew()}>
-            <Text style = {styles.createButton}>HELLO WORLD</Text>
-          </TouchableOpacity>
-        </View>
+          <Text style = {styles.subHeading}>There are no sessions for today :( {"\n"} 
+          Please feel free to create a session {"\n"}
+           or check out other day.ly tasks</Text>
+          <View style={{width: "50%", alignSelf: "center", marginBottom: "15%", marginTop: "5%"}}>
+                    <Button mode="contained" onPress={() => createNew()} style={{backgroundColor: '#c21f1f', borderRadius: 10}}>
+                        New Session
+                    </Button></View>
+        </LinearGradient>
       );
     }
     //If there is not an empty list
     else{
+      if(!fontsLoaded) {
+        return null;
+      }
       return (
-        <View style={styles.container}>
+        <LinearGradient colors={['#00c6ff', '#0072ff']} style={styles.container}>
+            <Button mode="contained" onPress={() => totalWeek()} style={styles.calendar} icon="calendar-month"> 
+
+            </Button>
           <Text style={styles.heading}> 
-              Welcome, Theodore
+              welcome, johnathan
           </Text>
-          <Text style ={styles.subHeading}> Here are your day.ly tasks for {dayOfTheWeek}:)</Text>
-        
+          <Text style ={styles.subHeading}> Here are your day.ly tasks for {dayOfTheWeek} :)</Text>
           {/* List of Sessions*/}
           <FlatList
             keyExtractor={item => item.key.toString()}
-            data={sess}
+            data={todaySess}
             renderItem={({ item }) => (
-              <TouchableOpacity onLongPress={() => handleEdit(item)} onPress={() => navigation.navigate('SessionDetails', {item})}>
+              <TouchableOpacity style={styles.itemContainer} onLongPress={() => handleEdit(item)} onPress={() => handleView(item)}>
                 <Text style={styles.item}>{item.name + " - " + item.starTime}</Text>
               </TouchableOpacity>
             )}
           />
           {/*add new button}*/}
           <View style={{width: "50%", marginLeft: "50%", marginBottom: "15%"}}>
-                    <Button mode="contained" onPress={() => navigation.navigate('CreationScreen')} style={{backgroundColor: "#ab3535"}}>
+                    <Button mode="contained" onPress={() => createNew()} style={{backgroundColor: '#c21f1f', borderRadius: 10}}>
                         New Session
                     </Button></View>
-        </View>
+        </LinearGradient>
         );
     }
 }
@@ -111,7 +156,7 @@ const styles = StyleSheet.create({
   heading: {
     fontFamily: 'OpenSansBold',
     fontSize: 40,
-    marginTop: '15%',
+    marginTop: '10%',
     textAlign: "center",
     marginBottom: '5%',
     color: "#ffffff"
@@ -129,14 +174,27 @@ const styles = StyleSheet.create({
     marginHorizontal: 20,
     marginVertical: 50,
   },
-
-  item: {
+  itemContainer: {
     marginTop: 25,
     padding: 30,
     backgroundColor: '#f2f2f2',
     fontSize: 24,
     borderRadius: 20,
-    color: "black",
     fontFamily: 'ProximaNovaRegular'
   },
+  item: {
+    color: "black",
+    fontSize: 24,
+    fontFamily: 'ProximaNovaRegular',
+  },
+  calendar: {
+    // marginBottom: 10,
+    paddingLeft:10,
+    marginLeft: '95%',
+    borderRadius: 10,
+    backgroundColor: '#c21f1f',
+    // width: '20%',
+  }
 });
+
+export default HomePage;

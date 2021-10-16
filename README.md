@@ -1,2 +1,2 @@
 # day.ly
-SD Hacks 2021 submission
+SD Hacks 2021 Submission
